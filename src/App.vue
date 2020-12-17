@@ -97,7 +97,7 @@ export default {
       Toast.loading({
         duration: 0,
         message: "Fetching data from server...",
-        // forbidClick: true,
+        forbidClick: true,
       });
     });
 
