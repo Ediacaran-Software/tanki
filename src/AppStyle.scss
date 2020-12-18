@@ -2,6 +2,45 @@ $theme-color: #555555;
 
 $top-nav-bar-height: 54px;
 
+/*#region scroll bar*/
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+body {
+  overflow-y: overlay;
+}
+/*#endregion */
+
+/*#region font*/
+body {
+  margin: 0px;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+}
+/*#endregion */
+
 .top-nav-bar {
   height: $top-nav-bar-height;
   background-color: $theme-color;
@@ -52,6 +91,29 @@ $top-nav-bar-height: 54px;
   margin: 10px;
 }
 
+.pop-up {
+  width: 40%;
+  .content {
+    display: flex;
+    padding: 20px;
+    .img {
+      width: 160px;
+      height: 100px;
+    }
+    .details {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      .detail {
+        margin-bottom: 5px;
+      }
+    }
+  }
+  .mobile-content {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 600px) {
   .top-nav-bar {
     .header {
@@ -71,5 +133,23 @@ $top-nav-bar-height: 54px;
   .tier-btn {
     width: 32px;
     margin: 2px;
+  }
+
+  .pop-up {
+    width: 90%;
+    .content {
+      .details {
+        .is-mobile {
+          display: none;
+        }
+      }
+    }
+    .mobile-content {
+      display: block;
+      .detail {
+        margin: 5px 20px 20px 20px;
+        text-align: left;
+      }
+    }
   }
 }

@@ -67,36 +67,64 @@
   </div>
   <div>
     <ul class="tank-data-container">
-      <li class="tank-data" v-for="tankData in tankDataDisplay" :key="tankData.tank_id">
+      <li
+        class="tank-data"
+        v-for="tankData in tankDataDisplay"
+        :key="tankData.tank_id"
+        @click="() => showPopup(tankData)"
+      >
         <h3>{{ tankData.name }}</h3>
         <img class="img" v-bind:src="tankData.images.big_icon" draggable="false" />
       </li>
     </ul>
   </div>
+  <Popup class="pop-up" v-model:show="show" closeable round>
+    <h3>{{ tankCardData.name }}</h3>
+    <div class="content">
+      <img class="img" v-bind:src="tankCardData.images.big_icon" draggable="false" />
+      <div class="details">
+        <div class="detail" style="font-weight: bold">Nation: {{ tankoperdiaInfo[5][tankCardData.nation] }}</div>
+        <div class="detail" style="font-weight: bold">Tier: {{ tankCardData.tier }}</div>
+        <div class="detail" style="font-weight: bold">Credits: {{ tankCardData.price_credit }}</div>
+        <div class="detail is-mobile">{{ tankCardData.description }}</div>
+      </div>
+    </div>
+    <div class="mobile-content">
+      <div class="detail">{{ tankCardData.description }}</div>
+    </div>
+  </Popup>
 </template>
 
 <script>
-import axios from "axios";
-import { ref, onMounted } from "vue";
-import Button from "vant/lib/button";
-import "vant/lib/button/style";
-import Toast from "vant/lib/toast";
-import "vant/lib/toast/style";
-import Search from "vant/lib/search";
-import "vant/lib/search/style";
+import axios from 'axios';
+import { ref, onMounted } from 'vue';
+import Button from 'vant/lib/button';
+import 'vant/lib/button/style';
+import Toast from 'vant/lib/toast';
+import 'vant/lib/toast/style';
+import Search from 'vant/lib/search';
+import 'vant/lib/search/style';
+import { Popup } from 'vant';
 
 export default {
   setup() {
-    const value = ref("");
+    const value = ref('');
+    const tankCardData = ref(null);
+    const show = ref(false);
+    const showPopup = (tankData) => {
+      show.value = true;
+      tankCardData.value = tankData;
+    };
 
     const tankDataDisplay = ref([]);
     const allTankData = [];
+    const tankoperdiaInfo = ref(null);
     let hasAllTankData = false;
 
     onMounted(() => {
       Toast.loading({
         duration: 0,
-        message: "Fetching data from server...",
+        message: 'Fetching data from server...',
         forbidClick: true,
       });
     });
@@ -206,19 +234,30 @@ export default {
 
     const onSearch = () => {
       getTankDataByName(value.value);
-      value.value = "";
+      value.value = '';
     };
 
     function getAllTankData() {
-      const url =
-        "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=9ac9f425f534dca03b4ab84d40bb7310";
-      axios.get(url).then(
+      const allTankUrl =
+        'https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=9ac9f425f534dca03b4ab84d40bb7310';
+      axios.get(allTankUrl).then(
         (response) => {
           Object.values(response.data.data).forEach((tankData) => {
             allTankData.push(tankData);
           });
           hasAllTankData = true;
-          Toast.success("Data fetched");
+          Toast.success('Data fetched');
+          console.log(allTankData[0]);
+          tankCardData.value = allTankData[0];
+        },
+        (error) => (this.content = error)
+      );
+
+      const tankoperdiaInfoUrl =
+        'https://api.worldoftanks.com/wot/encyclopedia/info/?application_id=9ac9f425f534dca03b4ab84d40bb7310';
+      axios.get(tankoperdiaInfoUrl).then(
+        (response) => {
+          tankoperdiaInfo.value = Object.values(response.data.data);
         },
         (error) => (this.content = error)
       );
@@ -235,22 +274,16 @@ export default {
       Search,
       value,
       onSearch,
+      Popup,
+      show,
+      showPopup,
+      tankCardData,
+      tankoperdiaInfo,
     };
   },
 };
 </script>
 
 <style lang="scss">
-@import "./AppStyle.scss";
-
-body {
-  margin: 0px;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-}
+@import './AppStyle.scss';
 </style>
